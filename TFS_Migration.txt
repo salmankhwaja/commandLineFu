@@ -1,0 +1,183 @@
+First off, this document discusses the Restoration of TFS on the Server. For that, one needs the following
+- Windows VM  or Server with
+    - Windows Server 2008 R2 Enterprise
+- That machine should be connected to the Internet.
+Install Firefox for browsing or checking TFS.
+
+The following links are to be consulted.
+    http://www.benday.com/BlogFiles/Tfs2012InstallGuide/#_Toc340763911
+    http://msdn.microsoft.com/en-us/library/vstudio/dd631902.aspx
+
+- Ensure that all the updates are transfered and applied on this Server.
+    1. Goto Control Panel
+    2. Search for Updates at top right corner.
+    3. Install all updates.
+    4. leave the PC for installing updates.
+    5. If running Virtual Box, install Guest Installation for better Administration Experience or something similar on VM Ware.
+
+Install Features or Pre Requisites for TFS.
+    1. Open Server Manager from Right clicking on My Computer.
+    - Click Features > Add Features
+    - Choose to install "Active Directory Certificate Services" and "Application Server" and "Web Server (IIS)". Add the resulting dialog boxes, as ALL.
+    - From "Roles and Services", add ".NET Framework 3.5" and "Web Server IIS Support", along with "Http Activation"
+    - From IIS Server, add  "IIS 6 Management Compatibility"
+    - Confirm and Install all.
+
+
+Time to Install SQL Server Installation:
+Ensure that SQL server 2008 R2 (Release 2) is installed.
+The
+ following features are to be installed, when choosing Feature based installation.
+
+    - Database Engine Services (required)
+    - Full-Text and Semantic Extractions for Search (required)
+    - Analysis Services (required for reporting)
+    - Reporting Services – Native (required for reporting)
+    - Client Tools Connectivity (required only if no other SQL Server components are installed on the server that is running Team Foundation Server - not pictured)
+    - Management Tools - Basic ¹ (not pictured)
+
+    - Install with everything as under.
+    - Make sure to choose DATA directory as D:/
+    - Also make sure, that the Server mode chosen is "multi dimensional" mode.
+    - When choosing Report Server, choose Install and Configure to automatically configure it for you.
+
+
+    Install SQL Server.
+
+Time to Install TFS 2012.
+Install TFS. This is very simple. Just make sure to install TFS and NOT TO CONFIGURE it.
+
+Next Install TFS Update 4. This also clicking NEXT NEXT.
+
+Next Install SQL Server Update r2 2008. This is also clicking NEXT NEXT.
+
+Now once all the above is installed, reboot the PC for being extra cautious.
+
+Now go to  \\TFSBackups and grab a Backup Set for a complete one day. Pick the most recent backup and copy all the files in
+D drive in a folder named BACKUP.
+
+Now open Windows Explorer and navigate to the following folder.
+    C:\Program Files\Microsoft Team Foundation Server 11.0\Tools
+    use TFSRestore tool to restore all the backed up database.
+
+Once done, open SQL Server Management Studio to rename all the database except Report Server.
+
+Now to time to run Commands
+
+Open up Command Prompt and type the following commands.
+PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\PrivateAssemblies\;C:\Program Files (x86)\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files\Microsoft Team Foundation Server 11.0\Tools
+
+    // Stop the Services.
+    TFSServiceControl quiesce // This command is not needed any more. The services are always stopped.
+
+    //Load up SQL Server Management Studio. Rename all the databases Manually.
+    // Rename Existing Configuration DB TFSConfiguration.
+    // Rename all the database, including collections and Report Server  and Report Server Temp DB
+
+
+    // Configuration of Services.
+    // ensure, that the Target server instance matches the instance mentioned in the command below.
+
+    TFSConfig ChangeServerID /SQLInstance:TFSQA /DatabaseName:TFS_Configuration
+    // The above command should execute with ZERO Errors
+
+
+    TFSConfig.exe accounts /resetowner /sqlinstance:TFS_Server\TFS_TargetServer /databasename:Tfs_Configuration
+    // The above command should execute with ZERO Errors
+
+
+    tfsconfig remapdbs /databaseName:TFS_Server\TFS_TargetServer;Tfs_Configuration /sqlInstances:TFS_Server\TFS_TargetServer
+    TFSConfig registerDB /sqlInstance:TFS_Server\TFS_TargetServer /databaseName:Tfs_Configuration
+
+    TFSConfig.exe accounts /add /accounttype:applicationtier /account:administrator "/password:tpstps_1" /sqlinstance:TFS_Server\TFS_TargetServer /databasename:Tfs_Configuration
+    // The above command should execute with one Error. Ignore it. Failed Adding Administrators to Administrators. That is because, I have been trying to add my local Admin to Domain Admin. With network, this error might not come, however I could not test it.
+
+    TFSServiceControl unquiesce
+
+
+
+    Now, Open TFS Server,
+    Run CONFIGURE FEATURES.
+    Choose Application Tier Only.
+    Everything should run smooth. Use the TFS Admin Password.
+    One warning might be displayed, that the account being configured is not on Domain. Ignore it and proceed to Configure.
+
+
+    Now Open TFS Admin Console, and CHANGE URLS to change previously changed URLS to the next ones.
+
+    Now keep TFS Admin Console opened, and Add Administrators as yourself so you can manage it.
+
+    Ensure that you are connected to the Domain, so that your user name could be added.
+
+    Choose Re-Apply Account, and Choose NETWORK SERVICE.
+
+    Ensure that URL is working
+        http://tfsqa:8080/tfs/_admin
+
+    If one can access this URL, the Application Tier, DB, and Collections are restored properly.
+
+    Time to Re Configure the Report Server.
+
+    Carefully,
+        Stop the Reporting Service from TFS Admin Console USing Reporting > STOP JOBS
+
+        Also Open START > Programs > SQL Server > Configuration > Reporting Services Configuration Manager.
+        Connect to Reporting Server
+        Stop the Reporting Server
+        Rename the Restored DB to original ones and Original ones to something as NEW as Prefix
+        Start the Reporting Manager. It should run.
+        if not, then access Service Manager, and change the Service to SA of SQL Ser
+        The Reporting Server should Start
+
+        Click "Service Account" and change the "Report Server" to "Network Service"
+        Click Apply.
+
+        Click "EXECUTION Account" and enter the Domain name user name along with password. This will be neeeded later.
+
+        Confirmation
+            Confirm WebService URL. It should be pointing to new Server Name
+
+        Click ENCRYPTION KEYS.
+            Restore the Encryption keys by clicking the RESTORE KEY. The Resotre key is in BAckups.
+            The password is TPStps_123
+
+        Goto SCALE OUT DEPLOYMENT
+            It should list Two Servers.
+            The correct way to remove is to go Command Prompt.
+
+        Now goto Command Prompt.
+            run "rskeymgmt -l"
+            it should list two Server names
+            Copy the Previous Server ID, whose Server was backedup
+            Run this command "rskeymgmt -r <installation ID>"
+        Goto SCALE OUT DEPLOYMENT
+            It should list only one Servers.
+
+
+        Switch to TFS Admin Console.
+            Click REPORTING > START JOBS
+            Now time to change URLS.
+            Click EDIT followed by
+            Click Reporting
+                Click Warehouse, Ensure that NEW Server Name is there. Change the Server Name and Click TEST
+            Click Analysis
+                Click ANALYSIS, Ensure that NEW Server name is there. Change the Server Name and Click Test
+            Click REPORTS
+                Click Reports Server. Change the name. POPULATE URLS. Proper URLS should be populated.
+
+            Enter the User Name  / password of Domain entered when configuring the Reporting Services.
+
+            Click OK.
+
+            Everything should now be working fine
+
+            Double check by clicking URLs.
+
+
+
+            Other than Accounts, Click OK.
+
+
+PS: as a side note, the following command could be used to Restore the Configuration of TFS to none. Remove all Configuration and Restart
+
+tfsconfig setup /uninstall:all

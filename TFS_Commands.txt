@@ -1,0 +1,142 @@
+TFS Monitoring Tool. 
+
+http://tfsServer:8080/tfs/_oi/_jobMonitoring
+
+use full commands
+
+    set path="%path%;c:\program files\java\jdk1.6.0_16\bin"
+    set path="%path%;C:\Program Files\Java\jre8\bin"
+
+path
+    set path="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program files\Java\jre8\bin"PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files\Java\jre8\bin";
+
+
+Work Item type Import and Export.
+
+    cd C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE
+    run these commands from Developer Machine and push them to SERVER.
+    Requirements
+    For the team project where the work item types are defined, you must have the following permissions set:
+    To export or list work item types, you must be a member of the Project Administrators group or have your View project-level information permission set to Allow.
+    To destroy, import, or rename work item types, you must be a member of the Team Foundation Administrators security group or the Project Administrators security group.
+
+    witadmin importwitd /collection:CollectionURL [/p:Project] /f:FileName [/e:Encoding] [/v]
+    witadmin importwitd /collection:http://tfsqa:8080/tfs/IRIS%204.0%20Collection/IRIS.Custom.4.0.0.HBL [/p:IRIS.Custom.4.0.0.HBL - Suite.sln] /f:Bug [/e:Encoding] [/v]
+
+    cd C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE
+
+    witadmin importwitd /f:"c:\Bug.wit" /collection:"http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management"
+    witadmin help importwitd
+
+    cd C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE
+    witadmin importwitd /f:"c:\Bug.xml" /collection:"http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management"
+  localtreechildren  The work item type import has completed.
+
+    witadmin importwitd /f:"e:\issue.xml" /collection:"http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management"
+
+    witadmin importwitd /f:"e:\Defect.xml" /collection:"http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management"
+
+    witadmin importwitd /f:"e:\Defect.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+
+
+cd C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE
+    witadmin importwitd /f:"e:\Features.xml" /collection:"http://tfsqa8:8080/tfs/HBL%20IRIS%203.5/" /p:"Monet Dev"
+    witadmin importwitd /f:"e:\Feature.xml" /collection:"http://tfsqa9:8080/tfs/IRIS_Collection/" /p:"Monet Online"
+
+    witadmin listwitd /collection:"http://tfsqa9:8080/tfs/IRIS_Collection/" /p:"Monet Online"
+
+    witadmin exportwitd /collection:"http://tfsqa9:8080/tfs/IRIS_Collection/" /p:"Monet Online" /n:Bug /f:c:Bug.xml /exportgloballists
+
+
+    witadmin listwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali
+
+
+One click Report Installation
+
+    cd C:\Program Files (x86)\Microsoft Team Foundation Server 2013 Power Tools>
+
+    tfpt addprojectreports /collection:"http://tfsqa9:8080/tfs/IRIS_Collection" /teamproject:"Monet Online" /processtemplate:"Microsoft Visual Studio Scrum 2013.2"
+    tfpt addprojectreports /collection:"http://tfsqa9:8080/tfs/IRIS_Collection" /teamproject:"IRIS HBL 3.6" /processtemplate:"Microsoft Visual Studio Scrum 2013.2"
+    tfpt addprojectreports /collection:http://TFS_Instance:8080/tfs/DefaultCollection /teamproject:"TheProject" /processtemplate:" MSF for Agile Software Development v5.0" /force
+    
+
+        Bug
+        Code Review Request
+        Code Review Response
+        Feature
+        Feedback Request
+        Feedback Response
+        Shared Steps
+        Task
+        Test Case
+        User Story
+        Issue
+        SDL Task
+        SDL Task Archetype
+        Shared Parameter
+        Test Plan
+        Test Suite
+
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Feature /f:c:feature.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Bug /f:c:Bug.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Task /f:c:Task.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:"User Story" /f:"c:User Story.xml" /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Issue /f:c:Issue.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:"SDL Task" /f:"c:SDL Task.xml" /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:"SDL Task Archetype" /f:"c:SDL Task Archetype.xml" /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Feature /f:c:feature.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Feature /f:c:feature.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Feature /f:c:feature.xml /exportgloballists
+    witadmin exportwitd /collection:http://vsalm:8080/tfs/FabrikamFiberCollection /p:Fabrikamfiberali /n:Feature /f:c:feature.xml /exportgloballists
+
+
+    The work item type import has completed.
+Process Export and Import
+    witadmin exportprocessconfig /collection:http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management" /f:"c:\Process.xml"
+    witadmin importprocessconfig /collection:http://tfsqa:8080/tfs/IRIS 4.0 Collection" /p:"Quality Management" /f:"c:\Process.xml"
+
+    witadmin exportwitd /collection:http://localhost:8080/tfs/defaultCollection /p:TestAgile /n:Bug /f:bug.xml
+
+    witadmin listwitd /collection:http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/ /p:Auto_CD_CI
+    witadmin listwitd /collection:http://tfs:8080/tfs/TFS_QM_Automation_Collection/ /p:Auto_CD_CI
+    witadmin importwitd /f:"e:\Product Backlog Item.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+
+    witadmin exportwitd /collection:"http://tfsqa6:8080/tfs/TFS_IRIS 3.5 Collection" /p:HBLDB /n: /f:bug.xml
+
+
+    witadmin importwitd /f:"e:\Task.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+    witadmin importwitd /f:"e:\Product Backlog Item.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+
+
+    witadmin exportagileprocessconfig /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:Auto_CD_CI /f:C:\AgileConfiguration.xml
+
+    Task Board Changes.
+    witadmin exportagileprocessconfig /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:Auto_CD_CI /f:"E:\AgileConfiguration.xml"
+    witadmin exportcommonprocessconfig /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:Auto_CD_CI /f:"E:\CommonConfiguration.xml"
+    witadmin exportcategories /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:Auto_CD_CI /f:"E:\Categories.xml"
+    witadmin importcommonprocessconfig /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:Auto_CD_CI /f:"E:\CommonConfiguration.xml"
+
+
+    witadmin importwitd /f:"e:\Product Backlog Item.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+    witadmin importwitd /f:"e:\Task.xml" /collection:"http://tfsqa6:8080/tfs/TFS_QM_Automation_Collection/" /p:"Auto_CD_CI"
+
+
+
+
+http://www.dotnetcurry.com/showarticle.aspx?ID=753
+
+path=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Windows Kits\8.0\Windows Performance Toolkit\;C:\Program Files (x86)\Microsoft Team Foundation Server2012 Power Tools\;C:\Program Files (x86)\Microsoft Team Foundation Server 2012 Power Tools\Best Practices Analyzer\;C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE
+
+
+Updating Process Templates
+    http://msdn.microsoft.com/en-us/library/ms194972.aspx
+Upload, Download and Delete Process Templates
+    http://msdn.microsoft.com/en-us/library/ms181510.aspx
+Configure Features after TFS Upgrade
+    http://msdn.microsoft.com/en-us/library/ff432837.aspx
+Configure and Customize the Agile Planning Tools
+    http://msdn.microsoft.com/en-us/library/hh543813.aspx
+Customizing the Worklfow. (Live Xml Updates)
+    http://msdn.microsoft.com/en-us/library/ms194981.aspx#ExampleWorkflow
+Reference Feilds Values:
+    http://msdn.microsoft.com/en-us/library/aa337626.aspx
