@@ -1,0 +1,6 @@
+How to Grab list of shutdowns / Startups and Un-Expected shutdowns.
+
+	Get-WinEvent -FilterHashtable @{Logname='System';ID=6008,6005,6006}
+
+	http://serverfault.com/questions/702828/windows-server-restart-shutdown-history
+	http://www.jonathanmedd.net/2010/03/powershell-2-0-one-cmdlet-at-a-time-69-get-winevent.html
