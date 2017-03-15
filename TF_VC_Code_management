@@ -1,0 +1,8 @@
+Manage your code through Command line
+Start Visual Studio Command Line 
+$ cd [Your desired path where you have done your usual GET folder. ]
+$ tf get
+$ tf checkout 
+$ tf checkout *.php // forceful checkout
+$ tf checkin /comment: "Adding new files"
+
