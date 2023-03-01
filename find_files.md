@@ -14,3 +14,24 @@ The following are options to modify in this command
 /C is the command to run the operation. @file is variable which is used to delete the file. 
  
 You can always check for reading the help files of MS DOS
+
+In case of Linux Operating systems, the following command could be used. 
+
+Find all files in Linux 15 days old
+
+```
+find /var/dtpdev/tmp/ -type f -mtime +15 -exec rm -f {} +
+```
+
+Let's break this down. find is the command, which search all the files @ 
+location /var/dtpdev/tmp/ 
+with type is file ( use an f for files and a d for directories)
+and modified time is +15 days
+exec indicates, what to do with those files. 
+If the find command brings in multiple files, 
+the same command, which is rm -f would be executed on each and every file.
+
+Reference: 
+https://linuxhint.com/delete-files-older-than-30-days-linux/
+
+
