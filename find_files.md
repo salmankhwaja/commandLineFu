@@ -24,12 +24,12 @@ find /var/dtpdev/tmp/ -type f -mtime +15 -exec rm -f {} +
 ```
 
 Let's break this down. find is the command, which search all the files @ 
-location /var/dtpdev/tmp/ 
-with type is file ( use an f for files and a d for directories)
-and modified time is +15 days
-exec indicates, what to do with those files. 
-If the find command brings in multiple files, 
-the same command, which is rm -f would be executed on each and every file.
+
+- location /var/dtpdev/tmp/ 
+- with type is file ( use an f for files and a d for directories)
+- and modified time is +15 days
+- exec indicates, what to do with those files. 
+- If the find command brings in multiple files, the same command, which is rm -f would be executed on each and every file.
 
 Reference: 
 https://linuxhint.com/delete-files-older-than-30-days-linux/
